@@ -6,50 +6,60 @@ C   Bean lines developed by Vallejos et al. (???) using a bi-parental family of 
 C     (Calima and Jamapa)
 C   
 C       Module-specific values of coefficients, specific to this function estimated from data reported by Bakhta et al.
+        Integer, parameter :: NPars = 12
 
-      Type ModelType
-        integer, parameter :: Npars=12   !Number of cultivar parameters
-        real TFi(NPars)               !Vector of cultivar parameters
-        character(*) CultivarID
-      End Type ModelType
-      Type (ModelType) ModelData
-        
-
-      contains
+    
+!------------------------------------------------------------------------      
+      Contains
 
 !------------------------------------------------------------------------      
-      Subroutine Init(CultivarID, ModelData)
-        ModelData % TFi = 0.0
-        ModelData % CultivarID = CultivarID
-        call ReadParams()
-        ModelData % FTi = 0.0
-        ModelData % RDi = 0.0
-        ModelDAta % SumRDi = 0.0
-      End Subroutine Init
+      Subroutine TFlower_init(CultivarID, TFi, SumRDi)
+        real, dimension(500) :: TFi           !Vector of cultivar parameters
+        character(30) CultivarID
+!        real, dimension(:), allocatable :: TFi           !Vector of cultivar parameters
+!!       Set array sizes based on current model:
+!        allocate (TFi(NPars))
+        call ReadParams(CultivarID, TFi)
+        SumRDi = 0.0
+      End Subroutine TFlower_init
 
 !------------------------------------------------------------------------      
-      Subroutine ReadParams()
+      Subroutine ReadParams(CultivarID, TFi)
 
       Integer Length
+      character(30) CultivarID
+      character*500 text
+      real, dimension(500) :: TFi           !Vector of cultivar parameters
 
-      Length = len(ModelData % CultivarID)
-      open (3000, file="cultivar.csv",status='old')
+      Length = len(trim(CultivarID))
+      !open (3000, file="cultivar.csv",status='old')
 
-      do while (.not. eof(3000))
-        read (3000,'(a)') text
-        if (text(1:Length) == ModelData % CultivarID) then
-          call readcsv(text,ModelData % NPars, ModelData % TFi)
-          exit
-        endif
-      enddo
+      !do while (.not. eof(3000))
+        !read (3000,'(a)') text
+        !if (text(1:Length) == CultivarID) then
+          call readcsv(text, TFi)
+          !exit
+        !endif
+      !enddo
 
       End Subroutine ReadParams
 
 !------------------------------------------------------------------------      
+      Subroutine ReadCsv(text, TFi)
+        character*500 text
+        real, dimension(500) :: TFi           !Vector of cultivar parameters
+        TFi = 0.0
 
+        do i = 1, NPar
+          call random_number(TFi(i))
+        enddo
 
-       Subroutine TFlower (Dayi, Sradi, Tmini, Tmaxi, ModelData)
-      
+      Return
+      end subroutine ReadCSV
+
+!------------------------------------------------------------------------      
+
+       Subroutine TFlower_rate (Dayi, Sradi, Tmini, Tmaxi, TFi, SumRDi)
 C   INPUTS to Module:
 C     E(Environmental variables): Dayi, Sradi, Tmini, Tmaxi
 C     G (Genetic Variables): TF1i, TF2i, TF3i, TF4i, TF5i, TF6i, TF7i, TF8i, TF9i, TF10i, TF11i, TF12i
@@ -75,33 +85,31 @@ C     SumRDi = current progress toward first flowering from emergence (dimension
      &    Tminm = 16.128,
      &    Tmaxm = 27.458
 
-      TFi = ModelData % TFi
+        real Dayi, Sradi, Tmini, Tmaxi
+        Real SumRDi
+        real, dimension(500) :: TFi           !Vector of cultivar parameters
 
-C     The dynamic gene-based mixed effects linear model
-       FTi = 44.18 + 4.026*(Dayi - Daym) + 0.1895*(Sradi - Sradm) 
+C       The dynamic gene-based mixed effects linear model
+        FTi = 44.18 + 4.026*(Dayi - Daym) + 0.1895*(Sradi - Sradm) 
      &   - 1.363*(Tmaxi - Tmaxm) - 0.6091*(Tmini - Tminm) - 1.31*TFi(1) 
      &   - 2.279*TFi(2) + 1.59*TFI(3) - 0.5576*TFi(4) + 0.04971*TFi(5) 
      &   - 0.8937*TFi(6) + 0.8774*TFi(7) + 0.3658*TFi(8) + 0.6629*TFi(9)
      &   + 0.3565*TFI(10) - 0.5583*TFi(11) + 0.326*TFi(12)
      &   - 0.3337*TFi(1)*TFi(2)
-     &   + 0.3031*(Tmini – Tminm)* TFi(2) + 1.808*(Dayi – Daym)*TFi(3) 
-     &   + 0.1974*((Tmini – Tminm)*TFi(3) -0.1495*(Tmaxi – Tmaxm)*TFi(5)
-     &   + 0.4997*(Dayi – Daym)*TFi(7) + 0.0266*(Sradi – Sradm)*TFi(12) 
-     &   - 0.2764*((Dayi – Daym)*TFi(12)  
+     &   + 0.3031*(Tmini - Tminm)* TFi(2) + 1.808*(Dayi - Daym)*TFi(3)
+     &   + 0.1974*(Tmini - Tminm)*TFi(3) -0.1495*(Tmaxi - Tmaxm)*TFi(5)
+     &   + 0.4997*(Dayi - Daym)*TFi(7) + 0.0266*(Sradi - Sradm)*TFi(12)
+     &   - 0.2764*(Dayi - Daym)*TFi(12)
 
        RDi = (1/FTi)
 
-C     Compute integral of development to pass back the cumulative progress toward development each day       
-       SumRDi = SumRDi0 + RDi*1.0
-
-      ModelData % FTi = FTi
-      ModelData % RDi = RDi
-      ModelData % SumRDi = SumRDi
+C     Compute integral of development to pass back the cumulative progress toward development each day  
+      SumRDi = SumRDi + RDi*1.0
 
 C     In the equation for computing SumRDi, the time step is assumed to be 1.0 d for this module (fixed)
       
        Return
-       End Subroutine TFlower
+       End Subroutine TFlower_rate
 
 !------------------------------------------------------------------------      
       End Module AnthesisRate
