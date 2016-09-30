@@ -47,12 +47,15 @@ C       Module-specific values of coefficients, specific to this function estima
 !------------------------------------------------------------------------      
       Subroutine ReadCsv(text, TFi)
         character*500 text
-        real, dimension(500) :: TFi           !Vector of cultivar parameters
-        TFi = 0.0
+        real, dimension(12) :: TFi, tfi0           !Vector of cultivar parameters
+        
+        data tfi0 /-1,-1,1,1,-1,-1,1,-1,1,1,-1,1/
 
-        do i = 1, NPar
-          call random_number(TFi(i))
-        enddo
+        TFi = tfi0
+
+        !do i = 1, NPar
+        !  call random_number(TFi(i))
+        !enddo
 
       Return
       end subroutine ReadCSV
