@@ -79,16 +79,31 @@ C     SumRDi = current progress toward first flowering from emergence (dimension
         real, dimension(500) :: TFi           !Vector of cultivar parameters
 
 C       The dynamic gene-based mixed effects linear model
-        FTi = 44.18 + 4.026*(Dayi - Daym) + 0.1895*(Sradi - Sradm) 
-     &   - 1.363*(Tmaxi - Tmaxm) - 0.6091*(Tmini - Tminm) - 1.31*TFi(1) 
-     &   - 2.279*TFi(2) + 1.59*TFI(3) - 0.5576*TFi(4) + 0.04971*TFi(5) 
-     &   - 0.8937*TFi(6) + 0.8774*TFi(7) + 0.3658*TFi(8) + 0.6629*TFi(9)
-     &   + 0.3565*TFI(10) - 0.5583*TFi(11) + 0.326*TFi(12)
-     &   - 0.3337*TFi(1)*TFi(2)
-     &   + 0.3031*(Tmini - Tminm)* TFi(2) + 1.808*(Dayi - Daym)*TFi(3)
-     &   + 0.1974*(Tmini - Tminm)*TFi(3) -0.1495*(Tmaxi - Tmaxm)*TFi(5)
-     &   + 0.4997*(Dayi - Daym)*TFi(7) + 0.0266*(Sradi - Sradm)*TFi(12)
-     &   - 0.2764*(Dayi - Daym)*TFi(12)
+        FTi = 44.18 
+     &    + 4.026  * (Dayi - Daym) 
+     &    + 0.1895 * (Sradi - Sradm) 
+     &    - 1.363  * (Tmaxi - Tmaxm) 
+     &    - 0.6091 * (Tmini - Tminm) 
+     &    - 1.31   * TFi(1) 
+     &    - 2.279  * TFi(2) 
+     &    + 1.59   * TFI(3) 
+     &    - 0.5576 * TFi(4) 
+     &    + 0.04971* TFi(5) 
+     &    - 0.8937 * TFi(6) 
+     &    + 0.8774 * TFi(7) 
+     &    + 0.3658 * TFi(8) 
+     &    + 0.6629 * TFi(9)
+     &    + 0.3565 * TFI(10) 
+     &    - 0.5583 * TFi(11) 
+     &    + 0.326  * TFi(12)
+     &    - 0.3337 * TFi(1) * TFi(2)
+     &    + 0.3031 * (Tmini - Tminm) * TFi(2) 
+     &    + 1.808  * (Dayi  - Daym)  * TFi(3)
+     &    + 0.1974 * (Tmini - Tminm) * TFi(3) 
+     &    - 0.1495 * (Tmaxi - Tmaxm) * TFi(5)
+     &    + 0.4997 * (Dayi  - Daym)  * TFi(7) 
+     &    + 0.0266 * (Sradi - Sradm) * TFi(12)
+     &    - 0.2764 * (Dayi  - Daym)  * TFi(12)
 
        RDi = (1/FTi)
 
@@ -108,7 +123,7 @@ C   Variable Definitions:
 C   FTi = flowering time of  the ith genotype, 
 C   44.18 is the mean flowering time (day) across the five sites,see Bakhta et al., 2016 
 C   Dayi = average day length from sowing to flowering observed by the ith genotype (hours), 
-C   Daym = mean day length across all five sites (12.37 hrs), 
+C   Daym = mean day  length across all five sites (12.37 hrs), 
 C   Sradi = average solar radiation from sowing to flowering observed by the ith genotype (Srad, MJ/m2d), 
 C   Sradm = mean solar radiation across all five sites (18.218 MJ/m2d), 
 C   Tmini = average minimum temperature from sowing to flowering observed by the ith genotype (°C), 
@@ -116,3 +131,4 @@ C   Tminm = mean solar radiation across all five sites (16.128 °C),
 C   Tmaxi =  average maximum temperature from sowing to flowering observed by ith genotype (°C), 
 C   Tmaxm = mean solar radiation across all five sites (27.458 °C), 
 C   TF1i :TF12i = alleles at QTL TF1:TF12 in ith genotype (Calima alleles = “+1” and Jamapa allele = “-1”). 
+ 
