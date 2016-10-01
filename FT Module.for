@@ -27,38 +27,24 @@ C       Module-specific values of coefficients, specific to this function estima
       Subroutine ReadParams(CultivarID, TFi)
 
       Integer Length
-      character(30) CultivarID
+      character(30) CultivarID, CID
       character*500 text
       real, dimension(500) :: TFi           !Vector of cultivar parameters
+      real Gen
+      
 
       Length = len(trim(CultivarID))
-      !open (3000, file="cultivar.csv",status='old')
+      open (3000, file="GeneticCoefs.csv",status='old')
 
-      !do while (.not. eof(3000))
-        !read (3000,'(a)') text
-        !if (text(1:Length) == CultivarID) then
-          call readcsv(text, TFi)
-          !exit
-        !endif
-      !enddo
+      do while (.not. eof(3000))
+        read (3000,'(a)') text
+        if (text(1:Length) == CultivarID) then
+          read (text,*) CID, Gen, (TFi(i),i=1,NPars)
+          exit
+        endif
+      enddo
 
       End Subroutine ReadParams
-
-!------------------------------------------------------------------------      
-      Subroutine ReadCsv(text, TFi)
-        character*500 text
-        real, dimension(12) :: TFi, tfi0           !Vector of cultivar parameters
-        
-        data tfi0 /-1,-1,1,1,-1,-1,1,-1,1,1,-1,1/
-
-        TFi = tfi0
-
-        !do i = 1, NPar
-        !  call random_number(TFi(i))
-        !enddo
-
-      Return
-      end subroutine ReadCSV
 
 !------------------------------------------------------------------------      
 
