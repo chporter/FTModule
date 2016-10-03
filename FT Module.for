@@ -1,10 +1,13 @@
       Module AnthesisRate
 
+!   Written, 2016-09-27 Jim Jones
+!   Compiled and modified by CH Porter
+!   
 !   Module for Development toward first flower in Common Bean, using G, E, and G x E inputs
 !   Based on data and relationahip reported by Bahkta et al. (???, submitted), 5 locations, 187 bean lines
 !   Bean lines developed by Vallejos et al. (???) using a bi-parental family of Common Bean
 !     (Calima and Jamapa)
-!   
+
 !       Module-specific values of coefficients, specific to this function estimated from data reported by Bakhta et al.
         Integer, parameter :: NPars = 12
 
@@ -15,9 +18,9 @@
 !------------------------------------------------------------------------      
       Subroutine TFlower_init(CultivarID, TFi, SumRDi)
 
-        character(30), intent(in) :: CultivarID
-        real, dimension(500), intent(out) :: TFi           !Vector of cultivar parameters
-        real, intent(out) :: SumRDi
+        character(30), intent(in) :: CultivarID   !Text string cultivar code
+        real, dimension(500), intent(out) :: TFi  !Vector of cultivar parameters
+        real, intent(out) :: SumRDi               !Initial value of SumRDi
 
 !       local variables
         character(30) CID
@@ -41,34 +44,37 @@
 !------------------------------------------------------------------------      
 
        Subroutine TFlower_rate (Dayi, Sradi, Tmini, Tmaxi, TFi, SumRDi)
+
 !   INPUTS to Module:
 !     E(Environmental variables): Dayi, Sradi, Tmini, Tmaxi
-!     G (Genetic Variables): TF1i, TF2i, TF3i, TF4i, TF5i, TF6i, TF7i, TF8i, TF9i, TF10i, TF11i, TF12i
-!   Thenumerical coefficients in the equation were developed for this specific population 
+!     G (Genetic Variables): TFi(1) thru TFi(12)
+!   The numerical coefficients in the equation were developed for this specific population 
 !     These are either coded in the eequation or above the equation, with numerical values that cannot be changed by users for other genotypes
 !     Changing them would cause results outside the confines of the data used to estimate them
 !   Initial value of progress toward development
-!     SumRDi0 (initially, SumRDi0 = 0.0 at time of plant emergence
+!     SumRDi0 (initially, SumRDi0 = 0.0 at time of sowing - NOTE: s/b emergence)
 !   
 !
 !   Modul Outputs, Dynamic Variables:
-!   
-!   Daily environmental variables (see above), and computations of the rate of development
+!     SumRDi = current progress toward first flowering from emergence (dimensionless), integral of RDi from crop emergence to current day
+
+!   Local variables
 !     RDi = Daily rate toward development, fraction such that when integrated over time and a value of 1.0 is reached (or exceeded
 !           First Flower occurs on that day
 !     RDi = (1/TFi), where
 !     FTi = predicted time for the plants to reach first flower for the selected genotype and the environmental factors on current day
-!     SumRDi = current progress toward first flowering from emergence (dimensionless), integral of RDi from crop emergence to current day
-
-        real, parameter :: 
-     &    Daym = 12.37,
-     &    Sradm = 18.218,
-     &    Tminm = 16.128,
-     &    Tmaxm = 27.458
 
         real, intent(in) :: Dayi, Sradi, Tmini, Tmaxi !daily weather data
         real, dimension(500), intent(in) :: TFi       !Vector of cultivar parameters
         Real, intent(out) :: SumRDi                   !progression towards anthesis
+
+        real RDi, FTi
+
+        real, parameter :: !mean values of environmental variables
+     &    Daym = 12.37,
+     &    Sradm = 18.218,
+     &    Tminm = 16.128,
+     &    Tmaxm = 27.458
 
 !       The dynamic gene-based mixed effects linear model
         FTi = 44.18 
@@ -100,9 +106,8 @@
        RDi = (1/FTi)
 
 !     Compute integral of development to pass back the cumulative progress toward development each day  
-      SumRDi = SumRDi + RDi*1.0
-
 !     In the equation for computing SumRDi, the time step is assumed to be 1.0 d for this module (fixed)
+      SumRDi = SumRDi + RDi*1.0
       
        Return
        End Subroutine TFlower_rate

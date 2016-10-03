@@ -1,5 +1,8 @@
 !   Driver for testing Flowering Time Module
 
+!   Written, 2016-09-27 CHPorter, Jim Jones
+
+
 Program Main
 
   USE AnthesisRate
@@ -20,18 +23,18 @@ Program Main
   call TFlower_init(CultivarID, TFi, SumRDi)
   
 ! Set sowing/start day of year for flowering model to start
-  SDat = 41
-  ADAP = 0
+  SDat = 41   !sowing date
+  ADAP = 0    !counter for number of days to anthesis
   
-  open(20,File=Weather,Status='OLD')
-  read(20,'(4/,a)') text    !skip first 5 lines
+  open(20,File=Weather,Status='OLD')  !DSSAT format weather data
+  read(20,'(4/,a)') text              !skip first 5 lines
   open(30,File="Anthesis.OUT",status='REPLACE')
   write(30,'(a)') "adap yr doy  srad  tmin  tmax  SumRDi"
 
+  Dayi = 12.0  !temporarily set daylength to 12 hours
+
 ! rate
   do i = 1, 365
-
-    Dayi = 12.0
     read(20,'(i5,3F6.0)') YRDOY, Sradi, Tmaxi, Tmini 
     DOY = MOD(YRDOY,1000)
     YR = (YRDOY - DOY)/1000
