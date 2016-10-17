@@ -3,9 +3,8 @@
 
 Program Main
 
-!  USE AnthesisRate
-
   integer DOY, SDat, YRDOY, YR
+  integer m, k, i !loop indices
   real x
   real Dayi, Sradi, Tmini, Tmaxi
   real SumRDi, Fdoy, ADAP
@@ -28,8 +27,6 @@ Program Main
   TFi(11)=+1.0
   TFi(12)=+1.0  
   
-!  Weather = "CCPO1201.WTH"
-
 ! initialization
 
   open(30,File="Anthesis.OUT",status='REPLACE')
@@ -40,7 +37,8 @@ Program Main
 ! Set sowing/start day of year for flowering model to start
   SDat = 41   !sowing date
   ADAP = 0    !counter for number of days from sowing to anthesis
-!  Initialize progress toward flowering, SumDRi, & Day of First Flower, Fdoy
+
+! Initialize progress toward flowering, SumDRi, & Day of First Flower, Fdoy
   SumRDi = 0.0
   Fdoy = 0.0
   
@@ -50,44 +48,44 @@ Program Main
   Tmaxi = 20.0
   Tmini = 10.0
   
-!Daylength (Dayi) variations loop
+! Daylength (Dayi) variations loop
   do m = 1,15
   
-!Temperature variations simulation loop  
-  do k = 1,15
-! Development calls Rate Module in a time loop for integration (daily)
-  YR = 00
-  do i = 1, 365
-  DOY = i
+!   Temperature variations simulation loop  
+    do k = 1,15
+!     Development calls Rate Module in a time loop for integration (daily)
+      YR = 00
+      do i = 1, 365
+        DOY = i
       
-    If (DOY > SDat-1) Then
-      ADAP = ADAP + 1
-      YRDOY = SDat + ADAP  !no development on sowing day
-      call TFlower_rate (Dayi, Sradi, Tmini, Tmaxi, TFi, SumRDi)
-      write(30,'(f4.1,1X,i2,1X,I3.3,3f6.2,f8.4)') ADAP, YR, DOY, Sradi, Tmini, Tmaxi, SumRDi
-      if (SumRDi > 1.0) then
-        Fdoy = YRDOY
-        write(40,'(3x,A8,4X,4(f5.1,4X),f5.3,7x,2(f5.1,4x))') CultivarID,Dayi,Sradi,Tmini,Tmaxi,SumRDi,ADAP,Fdoy
-        
-        exit
-      endif
-    endif
+        If (DOY > SDat-1) Then
+          ADAP = ADAP + 1
+          YRDOY = SDat + ADAP  !no development on sowing day
+          call TFlower_rate (Dayi, Sradi, Tmini, Tmaxi, TFi, SumRDi)
+          write(30,'(f4.1,1X,i2,1X,I3.3,3f6.2,f8.4)') ADAP, YR, DOY, Sradi, Tmini, Tmaxi, SumRDi
+          if (SumRDi > 1.0) then
+            Fdoy = YRDOY
+            write(40,'(3x,A8,4X,4(f5.1,4X),f5.3,7x,2(f5.1,4x))') CultivarID,Dayi,Sradi,Tmini,Tmaxi,SumRDi,ADAP,Fdoy
+            exit
+          endif
+        endif
+      enddo  !daily loop
 
-  enddo
       write(30,'(A8,4x,12(F5.2))') CultivarID, TFi 
-!   Reinitialize timer and integrator for delta temperature loop
-  Tmaxi  = Tmaxi + 1
-  Tmini  = Tmini + 1
-  SumRDi = 0.0
-  ADAP   = 0.0
-  enddo
+!     Reinitialize timer and integrator for delta temperature loop
+      Tmaxi  = Tmaxi + 1
+      Tmini  = Tmini + 1
+      SumRDi = 0.0
+      ADAP   = 0.0
+    enddo   !temperature loop
+
 !   Increment Dayi; Reinitialize timer and integrator for delta daylength loop 
-  Tmaxi  = 20.0
-  Tmini  = 10.0
-  Dayi   = Dayi + 0.5
-  
-  SumRDi = 0.0
-  ADAP   = 0.0  
-  enddo
+    Tmaxi  = 20.0
+    Tmini  = 10.0
+    Dayi   = Dayi + 0.5
+    SumRDi = 0.0
+    ADAP   = 0.0  
+  enddo  !daylength loop
+
   Stop
 End Program Main
