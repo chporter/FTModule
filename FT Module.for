@@ -1,46 +1,10 @@
-      Module AnthesisRate
-
-!   Written, 2016-09-27 Jim Jones
+ !   Written, 2016-09-27 Jim Jones
 !   Compiled and modified by CH Porter
 !   
 !   Module for Development toward first flower in Common Bean, using G, E, and G x E inputs
 !   Based on data and relationahip reported by Bahkta et al. (???, submitted), 5 locations, 187 bean lines
 !   Bean lines developed by Vallejos et al. (???) using a bi-parental family of Common Bean
 !     (Calima and Jamapa)
-
-!       Module-specific values of coefficients, specific to this function estimated from data reported by Bakhta et al.
-        Integer, parameter :: NPars = 12
-
-    
-!------------------------------------------------------------------------      
-      Contains
-
-!------------------------------------------------------------------------      
-      Subroutine TFlower_init(CultivarID, TFi, SumRDi)
-
-        character(30), intent(in) :: CultivarID   !Text string cultivar code
-        real, dimension(500), intent(out) :: TFi  !Vector of cultivar parameters
-        real, intent(out) :: SumRDi               !Initial value of SumRDi
-
-!       local variables
-        character(30) CID
-        Integer Length
-        character*500 text
-        real Gen
-
-        SumRDi = 0.0
-
-        Length = len(trim(CultivarID))
-        open (3000, file="GeneticCoefs.csv",status='old')
-
-        do while (.not. eof(3000))
-          read (3000,'(a)') text
-          if (text(1:Length) == CultivarID) then
-            read (text,*) CID, Gen, (TFi(i),i=1,NPars)
-            exit
-          endif
-        enddo
-      End Subroutine TFlower_init
 !------------------------------------------------------------------------      
 
        Subroutine TFlower_rate (Dayi, Sradi, Tmini, Tmaxi, TFi, SumRDi)
@@ -53,7 +17,6 @@
 !     Changing them would cause results outside the confines of the data used to estimate them
 !   Initial value of progress toward development
 !     SumRDi0 (initially, SumRDi0 = 0.0 at time of sowing - NOTE: s/b emergence)
-!   
 !
 !   Modul Outputs, Dynamic Variables:
 !     SumRDi = current progress toward first flowering from emergence (dimensionless), integral of RDi from crop emergence to current day
@@ -65,20 +28,20 @@
 !     FTi = predicted time for the plants to reach first flower for the selected genotype and the environmental factors on current day
 
         real, intent(in) :: Dayi, Sradi, Tmini, Tmaxi !daily weather data
-        real, dimension(500), intent(in) :: TFi       !Vector of cultivar parameters
+        real, dimension(12) :: TFi                   !Vector of cultivar parameters
         Real, intent(out) :: SumRDi                   !progression towards anthesis
 
         real RDi, FTi
 
-        real, parameter :: !mean values of environmental variables
-     &    Daym = 12.37,
-     &    Sradm = 18.218,
-     &    Tminm = 16.128,
-     &    Tmaxm = 27.458
+        !mean values of environmental variables
+         Daym = 12.37
+         Sradm = 18.218
+         Tminm = 16.128
+         Tmaxm = 27.458
 
 !       The dynamic gene-based mixed effects linear model
         FTi = 44.18 
-     &    + 4.026  * (Dayi - Daym) 
+     &    + 4.026  * (Dayi - Daym)
      &    + 0.1895 * (Sradi - Sradm) 
      &    - 1.363  * (Tmaxi - Tmaxm) 
      &    - 0.6091 * (Tmini - Tminm) 
@@ -111,10 +74,7 @@
       
        Return
        End Subroutine TFlower_rate
-
 !------------------------------------------------------------------------      
-      End Module AnthesisRate
-!   
 !
 !   Variable Definitions:
 !   FTi = flowering time of  the ith genotype, 
