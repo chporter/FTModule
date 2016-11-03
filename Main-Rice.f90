@@ -43,8 +43,8 @@ Program Main
 !  Weather = "CCPO1201.WTH"
 ! initialization, Open Files for output
 !------------------------------------------------------------------------                                  
-  open(30,File="Anthesis.OUT",status='REPLACE')
-  write(30,'(a)') "  adap yr doy      srad     tmean        Vt    SumRDi"
+!  open(30,File="Anthesis.OUT",status='REPLACE')
+!  write(30,'(a)') "  adap yr doy      srad     tmean        Vt    SumRDi"
   open(40,File='Sens.Temp.OUT',status='REPLACE')
   write(40,'(a)') "  Run#   Cultivar     DAYL      Srad     Tmean        Vt      SumRFi      ADAP      ADOY"
 
