@@ -3,7 +3,7 @@
 !------------------------------------------------------------------------                                  
 Program Main
 !------------------------------------------------------------------------                                  
-  integer DOY, SDat, YRDOY, YR, ADAP, Fdoy
+  integer DOY, SDat, YRDOY, YR, ADAP, Fdoy, RunNo
   real x
   real DLi, Sradi, Tmeani, Vti
   real SumRFi
@@ -19,7 +19,7 @@ Program Main
 !------------------------------------------------------------------------  
 
   CultivarID = " Gen102 "
-  Xi = 1.0
+  Xi = 0.0
 
   Xi(5)  = +2.0
   Xi(7)  = +2.0
@@ -46,7 +46,7 @@ Program Main
   open(30,File="Anthesis.OUT",status='REPLACE')
   write(30,'(a)') "  adap yr doy      srad     tmean        Vt    SumRDi"
   open(40,File='Sens.Temp.OUT',status='REPLACE')
-  write(40,'(a)') "   Cultivar     DAYL      Srad     Tmean        Vt    SumRFi      ADAP      ADOY"
+  write(40,'(a)') "  Run#   Cultivar     DAYL      Srad     Tmean        Vt    SumRFi      ADAP      ADOY"
 
 !------------------------------------------------------------------------                                  
 ! Set sowing/start day of year for flowering model to start
@@ -56,6 +56,7 @@ Program Main
   ADAP = 0    !counter for number of days from sowing to anthesis
   SumRDi = 0.0
   Fdoy = 0.0
+  RunNo = 0
 !------------------------------------------------------------------------                                  
 !Set constant values for weather inputs for sensitivity analysis
 !------------------------------------------------------------------------                                  
@@ -70,6 +71,7 @@ Program Main
   do m = 1,15
     do k = 1,15
       YR = 00
+      RunNo = RunNo + 1
       do i = 1, 365
         DOY = i
       
@@ -84,7 +86,7 @@ Program Main
 
           if (SumRFi > 1.0) then
             Fdoy = YRDOY
-            write(40,'(2x,A8, 3f10.1,F10.2,F10.3,2I10))') CultivarID, DLi,Sradi,Tmeani, Vti,SumRFi,ADAP,Fdoy
+            write(40,'(i6,2x,A8, 3f10.1,F10.2,F10.3,2I10))') RunNo, CultivarID, DLi,Sradi,Tmeani, Vti,SumRFi,ADAP,Fdoy
 !------------------------------------------------------------------------                                  
             exit
           endif
@@ -92,7 +94,7 @@ Program Main
 
       enddo
 
-      write(30,'(A8,4x,12(F5.2))') CultivarID, RFi 
+      write(30,'(A,4x,f10.2))') CultivarID, SumRFi 
 !     Reinitialize timer and integrator for delta temperature loop
       Tmeani  = Tmeani + 1
       SumRFi = 0.0
