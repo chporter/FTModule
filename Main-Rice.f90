@@ -64,63 +64,46 @@ Program Main
 ! doesn't iterate for Vti or Sradi; currently, only Tmeani and DLi, uses mean values                                
   Sradi = 21.55  
   Vti = 1.6      
-  DLi = 10.5  
-  Tmeani  = 14.0
+
+  Tmeani_start = 14.0
+  Tmeani_incr  = 1.0
+  Tmeani_N     = 15
+
+  DLi_start = 11.0
+  DLi_incr  = 0.5
+  DLi_N     = 15
 !------------------------------------------------------------------------                                  
 !Daylength (DLi) variations loop, m counter, and set
 !Temperature variations simulation loop, k counter 
-!------------------------------------------------------------------------                                  
-  do m = 1,15  !Daylength loop
+!------------------------------------------------------------------------ 
+  DLi = DLi_start                                 
+  do m = 1, DLi_N  !Daylength loop
 !   Increment daylength
-    DLi   = DLi + 0.5
-    Tmeani  = 13.0
+    DLi   = DLi + DLi_incr
 
-    do k = 1,15  !Tmean loop
+    Tmeani  = Tmeani_start
+    do k = 1, Tmeani_N  !Tmean loop
 !     Increment temperature
-      Tmeani  = Tmeani + 1
+      Tmeani  = Tmeani + Tmeani_incr
 
 !     Initialize accumulators
       SumRFi = 0.0
       ADAP   = 0.0  
       RunNo = RunNo + 1
 
-!      do i = 1, 365
-!        DOY = i
-!      
-!        If (DOY > SDat-1) Then
-!          ADAP = ADAP + 1
-!          YRDOY = SDat + ADAP  !no development on sowing day
+!     call flowering module one time and calculate ADAP
+      call RFlower_rate (DLi, Sradi, Tmeani, Vti, Xi, SumRFi)
 
-!------------------------------------------------------------------------                                  
-!         Development calls Rate Module in a time loop for integration (daily)
-! ** NOTE: this will give the same result with each call. Could just call once and invert to get DAP
+      If (SumRFi > 1.E-3) then
+        ADAP = 1.0 / SumRFi
+        DOY = SDAT + int(adap)
+      else
+        ADAP = -99.
+        DOY = -99
+      endif
+      FDOY = DOY
 
-          call RFlower_rate (DLi, Sradi, Tmeani, Vti, Xi, SumRFi)
-
-!   call one time and calculate ADAP
-          If (SumRFi > 1.E-3) then
-            ADAP = 1.0 / SumRFi
-            DOY = SDAT + int(adap)
-          else
-            ADAP = -99.
-            DOY = -99
-          endif
-          FDOY = DOY
-
-         ! write(30,'(i6,1X,i2,1X,I3.3,3F10.2,F10.3)') ADAP, YR, DOY, Sradi, Tmeani, Vti, SumRFi
-
-!          if (SumRFi > 1.0) then
-!            Fdoy = YRDOY
-!            exit
-!          else
-!            Fdoy = -99
-!          endif
-!!------------------------------------------------------------------------                                  
-!        endif
-!      enddo
-
-      write(40,'(i6,2x,A8, 3f10.1,F10.2,2X,F10.4,F10.1,I10))') RunNo, CultivarID, DLi,Sradi,Tmeani, Vti,SumRFi,ADAP,Fdoy
-   !   write(30,'(A,4x,f10.2))') CultivarID, SumRFi 
+      write(40,'(i6,2x,A8, 3f10.1,F10.2,2X,F10.5,F10.1,I10))') RunNo, CultivarID, DLi, Sradi, Tmeani, Vti, SumRFi, ADAP, Fdoy
 
     enddo  !Tmean loop
   enddo  !Daylength loop

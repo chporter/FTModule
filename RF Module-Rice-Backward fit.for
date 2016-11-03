@@ -46,8 +46,8 @@
 
 !        Mean values of environmental variables, estimated during fitting process for specific dataset used
          RFmean = 0.0098
-         DLm = 12.07
-         Sradm = 21.55
+         DLm    = 12.07
+         Sradm  = 21.55
          Tmeanm = 25.08
          Vtm    = 1.60
 !------------------------------------------------------------------------                                  
