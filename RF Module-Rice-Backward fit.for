@@ -8,7 +8,7 @@
 !     fitting RF = (1/TF) depending on E, G, and GxE factors
 !------------------------------------------------------------------------      
 
-       Subroutine RFlower_rate (DLi, Sradi, Tmeani, Xi, Vti, SumRFi)
+       Subroutine RFlower_rate (DLi, Sradi, Tmeani, Vti, Xi, SumRFi)
        
 !------------------------------------------------------------------------                                  
 !   INPUTS to Module:
@@ -71,7 +71,7 @@
      &    + 2.993e-04 * (Tmeani-Tmeanm) * Xi(5)
      &    + 3.037e-05 * (Tmeani-Tmeanm) * Xi(7)
      &    + 1.607e-04 * (Tmeani-Tmeanm) * Xi(10)
-     &    + 9.603e-05 * (Tmeani-Tmeanm) * Xi24)
+     &    + 9.603e-05 * (Tmeani-Tmeanm) * Xi(24)
      &    + 1.834e-04 * (Tmeani-Tmeanm) * Xi(29)
      &    + 3.211e-04 * (Tmeani-Tmeanm) * Xi(43)
      &    + 1.428e-04 * (Tmeani-Tmeanm) * Xi(44)
@@ -97,8 +97,8 @@
      &    + 1.895e-03 * (DLi - DLm) * Xi(5)
      &    + 8.223e-04 * (DLi - DLm) * Xi(10)
      &    + 1.075e-03 * (DLi - DLm) * Xi(29)
-     &    + 2.325e-03 * (DLi - DLm) * X(i43)
-     &    + 7.737e-04 * (DLi - DLm) * Xi44)
+     &    + 2.325e-03 * (DLi - DLm) * Xi(43)
+     &    + 7.737e-04 * (DLi - DLm) * Xi(44)
      &    - 1.115e-03 * (DLi - DLm) * Xi(56)
      &    + 2.218e-03 * (DLi - DLm) * Xi(60)
 !     

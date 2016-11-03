@@ -3,10 +3,10 @@
 !------------------------------------------------------------------------                                  
 Program Main
 !------------------------------------------------------------------------                                  
-  integer DOY, SDat, YRDOY, YR
+  integer DOY, SDat, YRDOY, YR, ADAP, Fdoy
   real x
   real DLi, Sradi, Tmeani, Vti
-  real SumRFi, Fdoy, ADAP
+  real SumRFi
   real, dimension(70) :: Xi           !Vector of genotype markers / parameters
   character(8) CultivarID
   character(12) Weather
@@ -19,32 +19,35 @@ Program Main
 !------------------------------------------------------------------------  
 
   CultivarID = " Gen102 "
-  Xi(5)=+2.0
-  Xi(7)=+2.0
-  Xi(10)=+2.0
-  Xi(13)=+2.0
-  Xi(17)=+2.0
-  Xi(18)=+2.0
-  Xi(24)=+2.0
-  Xi(26)=+2.0
-  Xi29)=+2.0
-  Xi(30)=+2.0
-  Xi(37)=+2.0
-  X(40)=+2.0
-  Xi(43)=+2.0  
-  Xi(44)=+2.0
-  Xi(56)=+2.0
-  Xi(60)=+2.0
-  Xi(68)=+2.0
+  Xi = 1.0
+
+  Xi(5)  = +2.0
+  Xi(7)  = +2.0
+  Xi(10) = +2.0
+  Xi(13) = +2.0
+  Xi(17) = +2.0
+  Xi(18) = +2.0
+  Xi(24) = +2.0
+  Xi(26) = +2.0
+  Xi(29) = +2.0
+  Xi(30) = +2.0
+  Xi(37) = +2.0
+  Xi(40) = +2.0
+  Xi(43) = +2.0  
+  Xi(44) = +2.0
+  Xi(56) = +2.0
+  Xi(60) = +2.0
+  Xi(68) = +2.0
   
 !------------------------------------------------------------------------                                  
 !  Weather = "CCPO1201.WTH"
 ! initialization, Open Files for output
 !------------------------------------------------------------------------                                  
   open(30,File="Anthesis.OUT",status='REPLACE')
-  write(30,'(a)') "adap yr doy  srad  tmean Vt  SumRDi"
+  write(30,'(a)') "  adap yr doy      srad     tmean        Vt    SumRDi"
   open(40,File='Sens.Temp.OUT',status='REPLACE')
-  write(40,'(a)') "   Cultivar'  DayLength  Srad     Tmean      Vt     SumRFi    Days to FL  Day 1st Flower"
+  write(40,'(a)') "   Cultivar     DAYL      Srad     Tmean        Vt    SumRFi      ADAP      ADOY"
+
 !------------------------------------------------------------------------                                  
 ! Set sowing/start day of year for flowering model to start
 !  Initialize progress toward flowering, SumDRi, & Day of First Flower, Fdoy
@@ -65,40 +68,44 @@ Program Main
 !Temperature variations simulation loop, k counter 
 !------------------------------------------------------------------------                                  
   do m = 1,15
-  do k = 1,15
-  YR = 00
-  do i = 1, 365
-  DOY = i
+    do k = 1,15
+      YR = 00
+      do i = 1, 365
+        DOY = i
       
-    If (DOY > SDat-1) Then
-      ADAP = ADAP + 1
-      YRDOY = SDat + ADAP  !no development on sowing day
-!------------------------------------------------------------------------                                  
-! Development calls Rate Module in a time loop for integration (daily)
-      call RFlower_rate (DLi, Sradi, Tmeani, Vti, RFi, SumRFi)
-      write(30,'(f4.1,1X,i2,1X,I3.3,3f6.2,f8.4)') ADAP, YR, DOY, Sradi, Tmeani, Vti, SumRFi
-      if (SumRFi > 1.0) then
-        Fdoy = YRDOY
-        write(40,'(3x,A8,4X,4(f5.1,4X),f5.3,7x,2(f5.1,4x))') CultivarID,DLi,Sradi,Tmini,Tmaxi,SumRDi,ADAP,Fdoy
-!------------------------------------------------------------------------                                  
-        
-        exit
-      endif
-    endif
+        If (DOY > SDat-1) Then
+          ADAP = ADAP + 1
+          YRDOY = SDat + ADAP  !no development on sowing day
 
-  enddo
+!------------------------------------------------------------------------                                  
+!         Development calls Rate Module in a time loop for integration (daily)
+          call RFlower_rate (DLi, Sradi, Tmeani, Vti, Xi, SumRFi)
+          write(30,'(i6,1X,i2,1X,I3.3,3F10.2,F10.3)') ADAP, YR, DOY, Sradi, Tmeani, Vti, SumRFi
+
+          if (SumRFi > 1.0) then
+            Fdoy = YRDOY
+            write(40,'(2x,A8, 3f10.1,F10.2,F10.3,2I10))') CultivarID, DLi,Sradi,Tmeani, Vti,SumRFi,ADAP,Fdoy
+!------------------------------------------------------------------------                                  
+            exit
+          endif
+        endif
+
+      enddo
+
       write(30,'(A8,4x,12(F5.2))') CultivarID, RFi 
-!   Reinitialize timer and integrator for delta temperature loop
-  Tmeani  = Tmeani + 1
-  SumRFi = 0.0
-  ADAP   = 0.0
-  enddo
+!     Reinitialize timer and integrator for delta temperature loop
+      Tmeani  = Tmeani + 1
+      SumRFi = 0.0
+      ADAP   = 0.0
+    enddo
+
 !   Increment DLi; Reinitialize timer and integrator for delta daylength loop 
-  Tmeani  = 14.0
-  DLi   = DLi + 0.5
+    Tmeani  = 14.0
+    DLi   = DLi + 0.5
   
-  SumRFi = 0.0
-  ADAP   = 0.0  
+    SumRFi = 0.0
+    ADAP   = 0.0  
   enddo
+
   Stop
 End Program Main
