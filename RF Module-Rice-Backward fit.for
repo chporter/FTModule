@@ -112,8 +112,9 @@
 !------------------------------------------------------------------------                                  
 !     Compute time integral of development to pass back the cumulative progress toward development each day  
 !     In the equation for computing SumRFi, the time step is assumed to be 1.0 d for this module (fixed)
-!------------------------------------------------------------------------                                  
-
+!------------------------------------------------------------------------                      
+!     Limit rate of development to positive values            
+      if (RFi < 1E-4) RFi = 0.0
       SumRFi = SumRFi + RFi*1.0
       
       Return
