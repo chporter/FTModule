@@ -86,14 +86,15 @@ Program Main
 
           if (SumRFi > 1.0) then
             Fdoy = YRDOY
-            write(40,'(i6,2x,A8, 3f10.1,F10.2,F10.3,2I10))') RunNo, CultivarID, DLi,Sradi,Tmeani, Vti,SumRFi,ADAP,Fdoy
-!------------------------------------------------------------------------                                  
             exit
+          else
+            Fdoy = -99
           endif
+!------------------------------------------------------------------------                                  
         endif
-
       enddo
 
+      write(40,'(i6,2x,A8, 3f10.1,F10.2,F10.3,2I10))') RunNo, CultivarID, DLi,Sradi,Tmeani, Vti,SumRFi,ADAP,Fdoy
       write(30,'(A,4x,f10.2))') CultivarID, SumRFi 
 !     Reinitialize timer and integrator for delta temperature loop
       Tmeani  = Tmeani + 1
