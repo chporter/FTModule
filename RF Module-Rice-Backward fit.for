@@ -37,6 +37,13 @@
 
         Real RFi, RFmean, DLm, Sradm, Tmeanm, Vtm
 
+        logical first
+        data first /.true./
+        if (first) then
+          SumRFi = 0.0
+          first = .false.
+        endif
+
 !        Mean values of environmental variables, estimated during fitting process for specific dataset used
          RFmean = 0.0098
          DLm = 12.07
