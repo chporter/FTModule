@@ -4,6 +4,7 @@
 Program Main
 !------------------------------------------------------------------------                                  
   integer DOY, SDat, YRDOY, YR, Fdoy, RunNo
+  integer Tmeani_N, DLi_N
   real x
   real DLi, Sradi, Tmeani, Vti, ADAP
   real SumRFi
@@ -103,7 +104,7 @@ Program Main
       endif
       FDOY = DOY
 
-      write(40,'(i6,2x,A8, 3f10.1,F10.2,2X,F10.5,F10.1,I10))') RunNo, CultivarID, DLi, Sradi, Tmeani, Vti, SumRFi, ADAP, Fdoy
+      write(40,'(i6,2x,A8, 3f10.1,F10.2,2X,F10.5,F10.1,I10)') RunNo, CultivarID, DLi, Sradi, Tmeani, Vti, SumRFi, ADAP, Fdoy
 
     enddo  !Tmean loop
   enddo  !Daylength loop
