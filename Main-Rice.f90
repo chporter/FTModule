@@ -2,11 +2,15 @@
 !   Written, 2016-09-27 CHPorter, Jim Jones
 !------------------------------------------------------------------------                                  
 Program Main
-!------------------------------------------------------------------------                                  
-  integer DOY, SDat, YRDOY, YR, Fdoy, RunNo
-  integer Tmeani_N, DLi_N
+!------------------------------------------------------------------------ 
+  implicit none
+  
+  integer DOY, SDat, YR, Fdoy, RunNo
+  integer Tmeani_N, DLi_N, k, m
   real x
   real DLi, Sradi, Tmeani, Vti, ADAP
+  real DLi_incr, DLi_start
+  real Tmeani_incr, Tmeani_start
   real SumRFi
   real, dimension(70) :: Xi           !Vector of genotype markers / parameters
   character(8) CultivarID
@@ -19,26 +23,26 @@ Program Main
 ! Also, even though Gezan found 19 significant markers, the model fitting process (backward) eliminated two of them (X66 and X25)
 !------------------------------------------------------------------------  
 
-  CultivarID = " Gen=1 "
-  Xi = 1.0
+  CultivarID = " Gen102 "
+  Xi = 0.0
 
-  !Xi(5)  = +2.0
-  !Xi(7)  = +2.0
-  !Xi(10) = +2.0
-  !Xi(13) = +2.0
-  !Xi(17) = +2.0
-  !Xi(18) = +2.0
-  !Xi(24) = +2.0
-  !Xi(26) = +2.0
-  !Xi(29) = +2.0
-  !Xi(30) = +2.0
-  !Xi(37) = +2.0
-  !Xi(40) = +2.0
-  !Xi(43) = +2.0  
-  !Xi(44) = +2.0
-  !Xi(56) = +2.0
-  !Xi(60) = +2.0
-  !Xi(68) = +2.0
+  Xi(5)  = +2.0
+  Xi(7)  = +2.0
+  Xi(10) = +2.0
+  Xi(13) = +2.0
+  Xi(17) = +2.0
+  Xi(18) = +2.0
+  Xi(24) = +2.0
+  Xi(26) = +2.0
+  Xi(29) = +2.0
+  Xi(30) = +2.0
+  Xi(37) = +2.0
+  Xi(40) = +2.0
+  Xi(43) = +2.0  
+  Xi(44) = +2.0
+  Xi(56) = +2.0
+  Xi(60) = +2.0
+  Xi(68) = +2.0
   
 !------------------------------------------------------------------------                                  
 !  Weather = "CCPO1201.WTH"
@@ -47,7 +51,29 @@ Program Main
 !  open(30,File="Anthesis.OUT",status='REPLACE')
 !  write(30,'(a)') "  adap yr doy      srad     tmean        Vt    SumRDi"
   open(40,File='Sens.Temp.OUT',status='REPLACE')
-  write(40,'(a)') "  Run#   Cultivar     DAYL      Srad     Tmean        Vt      SumRFi      ADAP      ADOY"
+  
+  write(40,'(A,A,17(/,2X,A,F8.3))') &
+    "Marker values for genotype: ", CultivarID, &
+    "Xi(5)  =", Xi(5) ,  &
+    "Xi(7)  =", Xi(7) ,  &
+    "Xi(10) =", Xi(10),  &
+    "Xi(13) =", Xi(13),  &
+    "Xi(17) =", Xi(17),  &
+    "Xi(18) =", Xi(18),  &
+    "Xi(24) =", Xi(24),  &
+    "Xi(26) =", Xi(26),  &
+    "Xi(29) =", Xi(29),  &
+    "Xi(30) =", Xi(30),  &
+    "Xi(37) =", Xi(37),  &
+    "Xi(40) =", Xi(40),  &
+    "Xi(43) =", Xi(43),  &  
+    "Xi(44) =", Xi(44),  &
+    "Xi(56) =", Xi(56),  &
+    "Xi(60) =", Xi(60),  &
+    "Xi(68) =", Xi(68)  
+
+    
+  write(40,'(/,a)') "  Run#   Cultivar     DAYL      Srad     Tmean        Vt      SumRFi      ADAP      ADOY"
 
 !------------------------------------------------------------------------                                  
 ! Set sowing/start day of year for flowering model to start
@@ -55,7 +81,7 @@ Program Main
 !------------------------------------------------------------------------                                  
   SDat = 41   !sowing date
   ADAP = 0.0    !counter for number of days from sowing to anthesis
-  SumRDi = 0.0
+  SumRFi = 0.0
   Fdoy = 0.0
   RunNo = 0
   YR = 00
